@@ -1,5 +1,5 @@
 ﻿#include <iostream>
-
+//односвязанный список
 template <typename T>
 class LinkedList {
 private:
