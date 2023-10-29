@@ -1,75 +1,72 @@
-template <typename T>
-class Queue {
-private:
-    struct Node {
-        T data;
-        Node* next;
-        Node* prev;
-    };
+#include<iostream>
+using namespace std;
 
-    Node* front;
-    Node* rear;
-    int size;
+struct Node {
+    int data;
+    Node* next;
+};
+
+class Stack {
+private:
+    Node* top;
 
 public:
-    Queue() : front(nullptr), rear(nullptr), size(0) {}
+    Stack() {
+        top = nullptr;
+    }
 
-    ~Queue() {
+    ~Stack() {
         while (!isEmpty()) {
-            dequeue();
+            pop();
         }
     }
 
-    void enqueue(const T& item) {
+    bool isEmpty() {
+        return top == nullptr;
+    }
+
+    void push(int value) {
         Node* newNode = new Node;
-        newNode->data = item;
-        newNode->next = nullptr;
-
-        if (isEmpty()) {
-            front = rear = newNode;
-            newNode->prev = nullptr;
-        }
-        else {
-            rear->next = newNode;
-            newNode->prev = rear;
-            rear = newNode;
-        }
-
-        size++;
+        newNode->data = value;
+        newNode->next = top;
+        top = newNode;
     }
 
-    void dequeue() {
+    int pop() {
         if (isEmpty()) {
-            return;
+            cout << "Error: Stack is empty!" << endl;
+            return -1;
         }
 
-        Node* temp = front;
-        front = front->next;
-
-        if (front == nullptr) {
-            rear = nullptr;
-        }
-        else {
-            front->prev = nullptr;
-        }
-
+        int poppedValue = top->data;
+        Node* temp = top;
+        top = top->next;
         delete temp;
-        size--;
+        return poppedValue;
     }
 
-    T& peek() const {
+    int peek() {
         if (isEmpty()) {
-            throw std::runtime_error("Queue is empty");
+            cout << "Error: Stack is empty!" << endl;
+            return -1;
         }
-
-        return front->data;
-    }
-
-    bool isEmpty() const {
-        return size == 0;
-    }
-
-    int getSize() const {
-        return size;
+        return top->data;
     }
 };
+
+int main() {
+    Stack stack;
+
+    stack.push(10);
+    stack.push(20);
+    stack.push(30);
+
+    cout << "Top element: " << stack.peek() << endl;
+
+    cout << "Popped element: " << stack.pop() << endl;
+    cout << "Popped element: " << stack.pop() << endl;
+
+    cout << "Top element after pops: " << stack.peek() << endl;
+
+    return 0;
+}
