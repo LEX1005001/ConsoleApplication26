@@ -1,93 +1,102 @@
 #include<iostream>
 using namespace std;
 
-class RingQueue {
+class Node {
+public:
+    int data;
+    Node* prev;
+    Node* next;
+
+    Node(int value) {
+        data = value;
+        prev = nullptr;
+        next = nullptr;
+    }
+};
+
+class DoublyLinkedList {
 private:
-    int* data;
-    int capacity;
-    int front;
-    int rear;
-    int count;
+    Node* head;
+    Node* tail;
 
 public:
-    RingQueue(int capacity) {
-        data = new int[capacity];
-        this->capacity = capacity;
-        front = 0;
-        rear = capacity - 1;
-        count = 0;
+    DoublyLinkedList() {
+        head = nullptr;
+        tail = nullptr;
     }
 
-    ~RingQueue() {
-        delete[] data;
+    ~DoublyLinkedList() {
+        Node* current = head;
+        while (current != nullptr) {
+            Node* next = current->next;
+            delete current;
+            current = next;
+        }
     }
 
     bool isEmpty() {
-        return count == 0;
+        return head == nullptr;
     }
 
-    bool isFull() {
-        return count == capacity;
-    }
+    void insertAtHead(int value) {
+        Node* newNode = new Node(value);
 
-    void enqueue(int value) {
-        if (isFull()) {
-            cout << "Error: Queue is full!" << endl;
-            return;
-        }
-
-        rear = (rear + 1) % capacity;
-        data[rear] = value;
-        count++;
-    }
-
-    int dequeue() {
         if (isEmpty()) {
-            cout << "Error: Queue is empty!" << endl;
-            return -1;
+            head = newNode;
+            tail = newNode;
         }
-
-        int dequeuedValue = data[front];
-        front = (front + 1) % capacity;
-        count--;
-        return dequeuedValue;
+        else {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
     }
 
-    int getFront() {
+    void insertAtTail(int value) {
+        Node* newNode = new Node(value);
+
         if (isEmpty()) {
-            cout << "Error: Queue is empty!" << endl;
-            return -1;
+            head = newNode;
+            tail = newNode;
         }
-        return data[front];
+        else {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+        }
     }
 
-    int getRear() {
-        if (isEmpty()) {
-            cout << "Error: Queue is empty!" << endl;
-            return -1;
+    void displayForward() {
+        Node* current = head;
+        while (current != nullptr) {
+            cout << current->data << " ";
+            current = current->next;
         }
-        return data[rear];
+        cout << endl;
+    }
+
+    void displayBackward() {
+        Node* current = tail;
+        while (current != nullptr) {
+            cout << current->data << " ";
+            current = current->prev;
+        }
+        cout << endl;
     }
 };
 
 int main() {
-    RingQueue queue(5);
+    DoublyLinkedList list;
 
-    queue.enqueue(10);
-    queue.enqueue(20);
-    queue.enqueue(30);
+    list.insertAtHead(10);
+    list.insertAtHead(20);
+    list.insertAtTail(30);
 
-    cout << "Front element: " << queue.getFront() << endl;
+    cout << "Forward traversal: ";
+    list.displayForward();
 
-    cout << "Dequeued element: " << queue.dequeue() << endl;
-    cout << "Dequeued element: " << queue.dequeue() << endl;
-
-    cout << "Front element after dequeues: " << queue.getFront() << endl;
-
-    queue.enqueue(40);
-    queue.enqueue(50);
-
-    cout << "Rear element: " << queue.getRear() << endl;
+    cout << "Backward traversal: ";
+    list.displayBackward();
 
     return 0;
 }
